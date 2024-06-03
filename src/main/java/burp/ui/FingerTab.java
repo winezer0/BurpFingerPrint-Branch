@@ -41,6 +41,7 @@ public class FingerTab implements IMessageEditorController {
     public static JPanel tagsPanel;
 
     // 在FingerTab类中添加成员变量
+    public static JToggleButton functionButton;
     public static JToggleButton toggleButton;
     public static JToggleButton weakPasswordBlasting;
     private static DefaultTableModel model;
@@ -122,6 +123,33 @@ public class FingerTab implements IMessageEditorController {
         gbc_lbSuccessCount.gridy = 0;
         FilterPanel.add(lbSuccessCount, gbc_lbSuccessCount);
 
+
+        functionButton = new JToggleButton(UiUtils.getImageIcon("/icon/openButtonIcon.png", 40, 24));
+        functionButton.setSelectedIcon(UiUtils.getImageIcon("/icon/shutdownButtonIcon.png", 40, 24));
+        functionButton.setPreferredSize(new Dimension(50, 24));
+        functionButton.setBorder(null);  // 设置无边框
+        functionButton.setFocusPainted(false);  // 移除焦点边框
+        functionButton.setContentAreaFilled(false);  // 移除选中状态下的背景填充
+        functionButton.setToolTipText("是否开启被动指纹识别");
+        functionButton.setSelected(true); //设置默认关闭
+
+        // 添加填充以在左侧占位
+        GridBagConstraints gbc_leftFiller_b1 = new GridBagConstraints();
+        gbc_leftFiller_b1.weightx = 0; // 使得这个组件吸收额外的水平空间
+        gbc_leftFiller_b1.gridx = 5; // 位置设置为第一个单元格
+        gbc_leftFiller_b1.gridy = 0; // 第一行
+        gbc_leftFiller_b1.fill = GridBagConstraints.HORIZONTAL; // 水平填充
+        FilterPanel.add(Box.createHorizontalGlue(), gbc_leftFiller_b1);
+
+        // 设置按钮的 GridBagConstraints
+        GridBagConstraints gbc_buttons_b1 = new GridBagConstraints();
+        gbc_buttons_b1.insets = new Insets(0, 5, 0, 5);
+        gbc_buttons_b1.gridy = 0; // 设置按钮的纵坐标位置
+        gbc_buttons_b1.fill = GridBagConstraints.NONE; // 不填充
+        gbc_buttons_b1.gridx = 7; // 将横坐标位置移动到下一个单元格
+        FilterPanel.add(functionButton, gbc_buttons_b1);
+
+
         toggleButton = new JToggleButton(UiUtils.getImageIcon("/icon/openButtonIcon.png", 40, 24));
         toggleButton.setSelectedIcon(UiUtils.getImageIcon("/icon/shutdownButtonIcon.png", 40, 24));
         toggleButton.setPreferredSize(new Dimension(50, 24));
@@ -133,7 +161,7 @@ public class FingerTab implements IMessageEditorController {
         // 添加填充以在左侧占位
         GridBagConstraints gbc_leftFiller = new GridBagConstraints();
         gbc_leftFiller.weightx = 1; // 使得这个组件吸收额外的水平空间
-        gbc_leftFiller.gridx = 5; // 位置设置为第一个单元格
+        gbc_leftFiller.gridx = 9; // 位置设置为第一个单元格
         gbc_leftFiller.gridy = 0; // 第一行
         gbc_leftFiller.fill = GridBagConstraints.HORIZONTAL; // 水平填充
         FilterPanel.add(Box.createHorizontalGlue(), gbc_leftFiller);
@@ -143,8 +171,26 @@ public class FingerTab implements IMessageEditorController {
         gbc_buttons.insets = new Insets(0, 5, 0, 5);
         gbc_buttons.gridy = 0; // 设置按钮的纵坐标位置
         gbc_buttons.fill = GridBagConstraints.NONE; // 不填充
-        gbc_buttons.gridx = 7; // 将横坐标位置移动到下一个单元格
+        gbc_buttons.gridx = 11; // 将横坐标位置移动到下一个单元格
         FilterPanel.add(toggleButton, gbc_buttons);
+
+        // 弱口令爆破按钮
+        weakPasswordBlasting = new JToggleButton(UiUtils.getImageIcon("/icon/WeakPasswordBlasting.png", 24, 24));
+        weakPasswordBlasting.setSelectedIcon(UiUtils.getImageIcon("/icon/WeakPasswordBlastingFalse.png", 24, 24));
+        weakPasswordBlasting.setPreferredSize(new Dimension(30, 30));
+        weakPasswordBlasting.setBorder(null);  // 设置无边框
+        weakPasswordBlasting.setFocusPainted(false);  // 移除焦点边框
+        weakPasswordBlasting.setContentAreaFilled(false);  // 移除选中状态下的背景填充
+        weakPasswordBlasting.setToolTipText("弱口令爆破开启（功能开发中，请进群敬请期待）");
+        // 弱口令爆破开关动作
+        weakPasswordBlasting.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // 例如，更新FingerConfigTab中的按钮状态
+                BurpExtender.getTags().weakPasswordTab.weakPasswordBlasting.setSelected(weakPasswordBlasting.isSelected());
+            }
+        });
+        weakPasswordBlasting.setSelected(true); //设置默认关闭口令爆破
 
         // 刷新按钮按钮
         flashButton = new JToggleButton(UiUtils.getImageIcon("/icon/runningButton.png", 24, 24));
@@ -155,14 +201,8 @@ public class FingerTab implements IMessageEditorController {
         flashButton.setContentAreaFilled(false);  // 移除选中状态下的背景填充
         flashButton.setToolTipText("用于控制表格是否自动化刷新，还是手工点击刷新");
 
-        // 刷新按钮按钮
-        weakPasswordBlasting = new JToggleButton(UiUtils.getImageIcon("/icon/WeakPasswordBlasting.png", 24, 24));
-        weakPasswordBlasting.setSelectedIcon(UiUtils.getImageIcon("/icon/WeakPasswordBlastingFalse.png", 24, 24));
-        weakPasswordBlasting.setPreferredSize(new Dimension(30, 30));
-        weakPasswordBlasting.setBorder(null);  // 设置无边框
-        weakPasswordBlasting.setFocusPainted(false);  // 移除焦点边框
-        weakPasswordBlasting.setContentAreaFilled(false);  // 移除选中状态下的背景填充
-        weakPasswordBlasting.setToolTipText("弱口令爆破开启（功能开发中，请进群敬请期待）");
+        // 刷新文本
+        flashText = new JLabel("自动每5秒刷新表格中");
 
         // 刷新按钮
         flashButton.addActionListener(new ActionListener() {
@@ -179,39 +219,29 @@ public class FingerTab implements IMessageEditorController {
             }
         });
 
-        // 刷新文本
-        flashText = new JLabel("自动每5秒刷新表格中");
-
-        gbc_buttons.gridx = 8; // 将横坐标位置移动到下一个单元格
+        gbc_buttons.gridx = 12; // 将横坐标位置移动到下一个单元格
         FilterPanel.add(weakPasswordBlasting, gbc_buttons);
-        gbc_buttons.gridx = 9; // 将横坐标位置移动到下一个单元格
+
+        gbc_buttons.gridx = 13; // 将横坐标位置移动到下一个单元格
         FilterPanel.add(flashButton, gbc_buttons);
-        gbc_buttons.gridx = 10; // 将横坐标位置移动到下一个单元格
+
+        gbc_buttons.gridx = 14; // 将横坐标位置移动到下一个单元格
         FilterPanel.add(flashText, gbc_buttons);
 
         // 添加填充以在右侧占位
         GridBagConstraints gbc_rightFiller = new GridBagConstraints();
         gbc_rightFiller.weightx = 1; // 使得这个组件吸收额外的水平空间
-        gbc_rightFiller.gridx = 12; // 位置设置为最后一个单元格
+        gbc_rightFiller.gridx = 16; // 位置设置为最后一个单元格
         gbc_rightFiller.gridy = 0; // 第一行
         gbc_rightFiller.fill = GridBagConstraints.HORIZONTAL; // 水平填充
         FilterPanel.add(Box.createHorizontalGlue(), gbc_rightFiller);
-
-
-        weakPasswordBlasting.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // 例如，更新FingerConfigTab中的按钮状态
-                BurpExtender.getTags().weakPasswordTab.weakPasswordBlasting.setSelected(weakPasswordBlasting.isSelected());
-            }
-        });
 
         // 添加一个 "清除" 按钮
         JButton btnClear = new JButton("清空");
         GridBagConstraints gbc_btnClear = new GridBagConstraints();
         gbc_btnClear.insets = new Insets(0, 0, 0, 5);
         gbc_btnClear.fill = 0;
-        gbc_btnClear.gridx = 13;  // 根据该值来确定是确定从左到右的顺序
+        gbc_btnClear.gridx = 17;  // 根据该值来确定是确定从左到右的顺序
         gbc_btnClear.gridy = 0;
         FilterPanel.add(btnClear, gbc_btnClear);
 
@@ -226,7 +256,7 @@ public class FingerTab implements IMessageEditorController {
         GridBagConstraints gbc_btnMore = new GridBagConstraints();
         gbc_btnClear.insets = new Insets(0, 0, 0, 5);
         gbc_btnClear.fill = 0;
-        gbc_btnClear.gridx = 14;  // 根据该值来确定是确定从左到右的顺序
+        gbc_btnClear.gridx = 18;  // 根据该值来确定是确定从左到右的顺序
         gbc_btnClear.gridy = 0;
         FilterPanel.add(moreButton, gbc_btnMore);
 
